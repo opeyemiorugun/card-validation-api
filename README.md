@@ -1,51 +1,88 @@
 # Card Validation API
 
-A REST API that validates card numbers using the Luhn algorithm and detects card type. 
+A REST API that validates card numbers using the Luhn algorithm and detects card type (Visa or Mastercard).
 
-** Note: The Luhn algorithm validates the structure of a card number but does not guarantee that the card is active or issued by a bank. **
+> **Note:** The Luhn algorithm validates the structural integrity of a card number. It does not verify whether the card is active or issued by a bank.
 
-## How to Run
-### Install dependencies
+## Tech Stack
+
+| Layer | Tool |
+|---|---|
+| Runtime | Node.js |
+| Framework | Express.js |
+| Language | TypeScript |
+| Testing | Vitest |
+| Dev Tools | tsx, nodemon |
+
+## Prerequisites
+
+- Node.js v18 or higher (developed on v24.15.0)
+- npm
+
+## Getting Started
+
+**Install dependencies**
+```bash
 npm install
+```
 
-### Development (runs directly from TypeScript)
+**Development** — runs TypeScript directly via tsx
+```bash
 npm run dev
+```
 
-### Production (compile then run compiled JS)
+**Production** — compiles to JavaScript, then runs the output
+```bash
 npm run build
 npm run start
+```
 
-## How to Test
+The server runs on `http://localhost:3000` by default.
+
+## Running Tests
+
+```bash
 npm test
+```
 
-Unit tests cover the Luhn algorithm and card type detection functions directly.
+Unit tests cover the Luhn validation algorithm and card type detection as pure functions, independent of the HTTP layer.
 
-## API Documentation
+## API Reference
 
-POST /validate-card
+### `POST /validate-card`
 
-Request:
-{"cardNum": "4532015112830366"}
+Validates a card number and returns its type.
 
-Success response (valid card - 200):
-{"valid": true, "type": "Visa"}
+**Request body**
+```json
+{ "cardNum": "4532015112830366" }
+```
 
-Success response (invalid card - 200):
-{"valid": false, "type": "Unknown"}
+**Responses**
 
-Error responses (400):
-{"error": "Card number is required"}
-{"error": "Card number must contain only digits"}
-{"error": "Card number must be between 13 and 19 digits"}
+| Status | Meaning | Example body |
+|---|---|---|
+| 200 | Valid card | `{ "valid": true, "type": "Visa" }` |
+| 200 | Invalid card | `{ "valid": false, "type": "Unknown" }` |
+| 400 | Bad request | `{ "error": "Card number is required" }` |
+
+**Supported card types:** Visa, Mastercard. All other card networks return `"type": "Unknown"`.
+
+**400 error messages**
+- `"Card number is required"`
+- `"Card number must contain only digits"`
+- `"Card number must be between 13 and 19 digits"`
 
 ## Design Decisions
 
-**Express over NestJS** — Express is lightweight and allows quick setup of a single HTTP endpoint without unnecessary abstraction. For this scope, it keeps the implementation simple and easy to reason about.
+**Express over NestJS** — a single endpoint does not justify NestJS's abstractions. Express keeps the implementation flat and easy to reason about.
 
-**Luhn algorithm** — Industry standard checksum for card number validation, widely used by payment systems to detect common input errors such as mistyped or transposed digits.
+**Luhn algorithm** — industry-standard checksum for card number validation, widely used by payment systems to catch common input errors such as mistyped or transposed digits.
 
-**Unit tests over integration tests** — The core logic is implemented as pure functions, making them ideal for isolated testing. This ensures the correctness of the validation algorithm independent of the HTTP layer. Integration tests could be added in a larger system to verify full request-response behavior.
+**Visa and Mastercard only** — these are the predominant card networks in Nigeria. Other card numbers pass through validation normally but return `"type": "Unknown"`.
 
-**Vitest** — Fast, modern test runner with native TypeScript and ESM support. Requires minimal configuration for this project setup.
+**Card type always returned** — real payment interfaces display card type as soon as the first digits are entered, before the full number is complete. This API mirrors that behaviour by always including `type` in the response regardless of validity.
 
-**Card type always returned** — In real payment interfaces, card type is displayed as soon as the first digits are entered, regardless of whether the full number is valid yet. This mirrors that behaviour.
+**Unit tests over integration tests** — core logic is implemented as pure functions, making isolated unit tests the most direct way to verify correctness. Integration tests covering the full HTTP layer could be added as the project grows.
+
+**Vitest** — fast, modern test runner with native TypeScript and ESM support. Requires minimal configuration for this stack.
