@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateCardNumber } from './luhn.js';
+import { validateCardNumber, getCardType } from './luhn.js';
 
 describe('validateCardNumber', () => {
     // Valid card
@@ -32,4 +32,16 @@ describe('validateCardNumber', () => {
         expect(result).toBe(true);
     });
 
-})
+});
+
+describe('getCardType', () => {
+    it('should return Visa for card numbers starting with 4', () => {
+        expect(getCardType('4532015112830366')).toBe('Visa');
+    });
+    it('should return MasterCard for card numbers starting with 51-55', () => {
+        expect(getCardType('5425233430109903')).toBe('MasterCard');
+    });
+    it('should return Unknown for card numbers that do not match known patterns', () => {
+        expect(getCardType('1234567890123456')).toBe('Unknown');
+    });
+});
