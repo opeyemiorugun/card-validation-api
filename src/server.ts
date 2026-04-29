@@ -1,5 +1,5 @@
 import express, {type Request, type Response } from 'express';
-import { validateCardNumber } from './luhn.js';
+import { validateCardNumber, getCardType } from './luhn.js';
 
 const app = express();
 app.use(express.json());
@@ -17,7 +17,8 @@ app.post('/validate-card', (req: Request, res: Response) => {
         return res.status(400).json({ error: 'Card number must be between 13 and 19 digits' });
     }
     const isValid = validateCardNumber(cardNum);
-    res.status(200).json({ valid: isValid });
+    const cardType = getCardType(cardNum);
+    res.status(200).json({ valid: isValid, type: cardType });
 });
 
 app.listen(3000, () => {

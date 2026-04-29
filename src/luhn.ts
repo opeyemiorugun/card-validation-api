@@ -11,6 +11,13 @@ function validateCardNumber(cardNumber: string): boolean {
     // Sum all the digits
     const sum: number = adjusted.reduce((acc, n) => acc + n, 0);
     return sum % 10 === 0;
+};
+
+function getCardType(cardNumber: string): string {
+    if (cardNumber.startsWith('4')) return 'Visa';
+    const firstTwoDigits: number = Number(cardNumber.slice(0, 2));
+    if (firstTwoDigits >= 51 && firstTwoDigits <= 55) return 'MasterCard';
+    return 'Unknown';
 }
 
-export { validateCardNumber };
+export { validateCardNumber, getCardType };
