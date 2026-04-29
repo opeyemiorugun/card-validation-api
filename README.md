@@ -18,8 +18,11 @@ A REST API that validates card numbers using the Luhn algorithm and detects card
 
 - Node.js v18 or higher (developed on v24.15.0)
 - npm
+- Docker (optional, for container-based setup)
 
 ## Getting Started
+
+### Option 1 - Run locally
 
 **Install dependencies**
 ```bash
@@ -38,6 +41,26 @@ npm run start
 ```
 
 The server runs on `http://localhost:3000` by default.
+
+### Option 2 — Run with Docker
+
+**Build the image**
+```bash
+docker build -t card-validation-api:latest .
+```
+
+**Run the container**
+```bash
+docker run -p :3000 card-validation-api:latest
+```
+
+Replace `<host-port>` with any available port on your machine. For example:
+```bash
+docker run -p 3003:3000 card-validation-api:latest
+```
+
+The API will be available at `http://localhost:<host-port>`.
+
 
 ## Running Tests
 
@@ -73,6 +96,15 @@ Validates a card number and returns its type.
 - `"Card number must contain only digits"`
 - `"Card number must be between 13 and 19 digits"`
 
+### `GET /`
+
+Health check endpoint. Confirms the API is running.
+
+**Response (200)**
+```
+Card Validation API is running
+```
+
 ## Design Decisions
 
 **Express over NestJS** — a single endpoint does not justify NestJS's abstractions. Express keeps the implementation flat and easy to reason about.
@@ -86,3 +118,5 @@ Validates a card number and returns its type.
 **Unit tests over integration tests** — core logic is implemented as pure functions, making isolated unit tests the most direct way to verify correctness. Integration tests covering the full HTTP layer could be added as the project grows.
 
 **Vitest** — fast, modern test runner with native TypeScript and ESM support. Requires minimal configuration for this stack.
+
+**Docker support** — the application is containerised for consistent runtime behaviour across environments. The container exposes port 3000 internally, which can be mapped to any host port at runtime.
