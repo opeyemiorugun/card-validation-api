@@ -4,6 +4,25 @@ A REST API that validates card numbers using the Luhn algorithm and detects card
 
 > **Note:** The Luhn algorithm validates the structural integrity of a card number. It does not verify whether the card is active or issued by a bank.
 
+## Live Demo
+
+Base URL: `https://card-validation-api-zx3l.onrender.com`
+
+> **Note:** The service is hosted on Render's free tier and may take 30–50 seconds to respond after a period of inactivity (cold start).
+
+To test the API, send a POST request to the `/validate-card` endpoint:
+
+```bash
+curl -X POST https://card-validation-api-zx3l.onrender.com/validate-card \
+  -H "Content-Type: application/json" \
+  -d "{\"cardNum\": \"4532015112830366\"}"
+```
+
+Expected response:
+```json
+{ "valid": true, "type": "Visa" }
+```
+
 ## Tech Stack
 
 | Layer | Tool |
