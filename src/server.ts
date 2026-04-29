@@ -21,6 +21,12 @@ app.post('/validate-card', (req: Request, res: Response) => {
     res.status(200).json({ valid: isValid, type: cardType });
 });
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+app.get('/', (req: Request, res: Response) => {
+    res.status(200).json({ message: 'Card Validation API is running' });
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
