@@ -7,14 +7,21 @@ app.use(express.json());
 app.post('/validate-card', (req: Request, res: Response) => {
     let { cardNum } = req.body;
     if (!cardNum) {
-        return res.status(400).json({ error: 'Card number is required' });
+        res.status(400).json({ error: 'Card number is required' });
+        return;
+    }
+    if (typeof cardNum !== 'string') {
+        res.status(400).json({ error: 'Card number must be a string' });
+        return;
     }
     cardNum = cardNum.replace(/[\s-]+/g, ''); // Remove spaces and dashes
     if (!/^\d+$/.test(cardNum)) {
-        return res.status(400).json({ error: 'Card number must contain only digits' });
+        res.status(400).json({ error: 'Card number must contain only digits' });
+        return;
     }
     if (cardNum.length < 13 || cardNum.length > 19) {
-        return res.status(400).json({ error: 'Card number must be between 13 and 19 digits' });
+        res.status(400).json({ error: 'Card number must be between 13 and 19 digits' });
+        return;
     }
     const isValid = validateCardNumber(cardNum);
     const cardType = getCardType(cardNum);
